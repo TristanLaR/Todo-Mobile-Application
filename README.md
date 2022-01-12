@@ -1,6 +1,6 @@
 # TODO
 
-A simple and beautiful categorical todo application. Made to expirement with the Flutter framework
+A simple and beautiful categorical todo application. Made to experiment with the Flutter framework
 
 <p float="left">
 <img src="/media/todo_gif.gif" width="200" height="400" style="padding: 2px"> 

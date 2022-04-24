@@ -5,17 +5,18 @@ import 'package:todo/models/todo_category.dart';
 import 'package:todo/models/todo_model.dart';
 
 class CreateTodo extends HookConsumerWidget {
-  CreateTodo({this.todo, this.todoCategory, Key? key}) : super(key: key);
+  CreateTodo({required this.todo, this.todoCategory, Key? key}) : super(key: key);
 
-  final Todo? todo;
+  final Todo todo;
   final TodoCategory? todoCategory;
   final textController = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    textController.text = (todo != null) ? todo!.description : "";
-    textController.selection = TextSelection.fromPosition(TextPosition(offset: textController.text.length));
-    final category = todoCategory ?? todo!.category;
+    textController.text = "";
+    textController.selection = TextSelection.fromPosition(
+        TextPosition(offset: textController.text.length));
+    final category = todoCategory ?? todo.category;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -52,7 +53,7 @@ class CreateTodo extends HookConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Spacer(
-              flex: 8,
+              flex: 4,
             ),
             Text(
               "What tasks are you planning to perform?",
@@ -70,15 +71,15 @@ class CreateTodo extends HookConsumerWidget {
                 style: TextStyle(
                   fontSize: 28.0,
                 ),
-                autofocus: true,
+                autofocus: false,
               ),
             ),
+            Divider(),
             Spacer(
-              flex: 8,
+              flex: 4,
             ),
             Column(
               children: [
-                Divider(),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12.0),
                   child: Row(
@@ -95,6 +96,40 @@ class CreateTodo extends HookConsumerWidget {
                   ),
                 ),
                 Divider(),
+                ListView.builder(
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12.0),
+                        child: Row(
+                          children: [
+                            Icon(Icons.add, color: Colors.grey),
+                            Padding(
+                              padding: EdgeInsets.only(left: 10.0),
+                              child: Text(
+                                "Subtask $index",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            )
+                          ],
+                        ),
+                      );
+                    },
+                    itemCount: todo.subtasks.data.length),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  child: Row(
+                    children: [
+                      Icon(Icons.add, color: Colors.grey),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10.0),
+                        child: Text(
+                          "Add a new subtask",
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
                 // SizedBox(height: 50),
                 // Divider(),
               ],
@@ -119,13 +154,9 @@ class CreateTodo extends HookConsumerWidget {
           ),
           child: ElevatedButton(
             onPressed: () {
-              todoCategory != null
-                  ? ref
-                      .read(todoListProvider.notifier)
-                      .add(textController.text, todoCategory!)
-                  : ref
-                      .read(todoListProvider.notifier)
-                      .edit(id: todo!.id, description: textController.text);
+              ref
+                  .read(todoListProvider.notifier)
+                  .edit(id: todo.id, description: textController.text);
               Navigator.of(context).pop();
             },
             child: Icon(Icons.add),

@@ -19,6 +19,7 @@ class DetailPage extends HookConsumerWidget {
     final percentComplete = (todos.data.length == 0)
         ? 0.0
         : completedTodos.data.length / todos.data.length;
+    Todo newTodo;
     return Stack(
       children: [
         Hero(
@@ -219,15 +220,13 @@ class DetailPage extends HookConsumerWidget {
                   backgroundColor: Colors.transparent,
                   elevation: 0,
                   onPressed: () => {
-                    // ref
-                    //     .read(todoListProvider.notifier)
-                    //     .add("Todo item #${todos.data.length + 1}", todoCategory)
+                    newTodo = ref.read(todoListProvider.notifier).add(todoCategory),
                     Navigator.of(context).push(
                       PageRouteBuilder(
                         pageBuilder: (BuildContext context,
                                 Animation<double> animation,
                                 Animation<double> secondaryAnimation) =>
-                            CreateTodo(todoCategory: todoCategory),
+                            CreateTodo(todo: newTodo),
                         transitionDuration: Duration(milliseconds: 700),
                         reverseTransitionDuration: Duration(milliseconds: 700),
                         transitionsBuilder:

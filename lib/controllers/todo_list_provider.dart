@@ -48,11 +48,13 @@ class TodoList extends StateNotifier<ListOfTodoModel> {
   }
 
   /// Adds a new [Todo] to the list
-  void add(String description, TodoCategory category) {
+  Todo add(TodoCategory category) {
+    Todo todo = Todo(id: _uuid.v4(), category: category);
     state = ListOfTodoModel(data: [
       ...state.data,
-      Todo(id: _uuid.v4(), description: description, category: category)
+      todo
     ]);
+    return todo;
   }
 
   /// Toggle Favourite

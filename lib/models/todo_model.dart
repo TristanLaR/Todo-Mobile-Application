@@ -1,3 +1,4 @@
+import 'package:todo/models/list_todo_model.dart';
 import 'package:todo/models/todo_category.dart';
 
 class Todo {
@@ -6,14 +7,15 @@ class Todo {
   late TodoCategory category;
   late bool isCompleted;
   late bool isFavourite;
+  late ListOfTodoModel subtasks;
 
   Todo({
     required this.id,
-    required this.description,
+    this.description = "",
     required this.category,
     this.isCompleted = false,
     this.isFavourite = false,
-  });
+  }) : subtasks = ListOfTodoModel(data: []);
 
   Todo.fromJson(Map<String, dynamic> json) {
     id = json["id"].toString();

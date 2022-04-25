@@ -7,16 +7,16 @@ import 'package:uuid/uuid.dart';
 const _uuid = Uuid();
 
 final subtaskProvider =
-    StateNotifierProvider<SubtaskProvider, ListOfTodoModel>((ref) {
-  return SubtaskProvider(ListOfTodoModel(data: []));
+    StateNotifierProvider.family<SubtaskProvider, ListOfTodoModel, Todo>((ref, parent) {
+  return SubtaskProvider(ListOfTodoModel(data: []), parent);
 });
 
 class SubtaskProvider extends StateNotifier<ListOfTodoModel> {
-  SubtaskProvider(ListOfTodoModel initialTodos) : super(initialTodos);
+  SubtaskProvider(ListOfTodoModel initialTodos, Todo parentTodo) : super(initialTodos);
 
   /// Adds a new [Todo] to the list
-  void add(TodoCategory category) {
-    Todo todo = Todo(id: _uuid.v4(), category: category);
+  void add() {
+    Todo todo = Todo(id: _uuid.v4(), description: "Subtask ${state.data.length}");
     state = ListOfTodoModel(data: [
       ...state.data,
       todo

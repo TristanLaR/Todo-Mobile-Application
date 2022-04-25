@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:todo/controllers/subtask_provider.dart';
 import 'package:todo/controllers/todo_list_provider.dart';
 import 'package:todo/models/todo_category.dart';
 import 'package:todo/models/todo_model.dart';
@@ -18,7 +19,7 @@ class CreateTodo extends HookConsumerWidget {
         TextPosition(offset: textController.text.length));
     final category = todoCategory ?? todo.category;
 
-    final subtasks = ref.watch(todoListProvider).data.where((element) => element.id == todo.id).first.subtasks;
+    final subtasks = ref.watch(subtaskProvider(todo));
 
     return Scaffold(
       appBar: AppBar(
@@ -87,7 +88,7 @@ class CreateTodo extends HookConsumerWidget {
                   padding: const EdgeInsets.symmetric(vertical: 12.0),
                   child: Row(
                     children: [
-                      Icon(category.icon, color: Colors.grey),
+                      Icon(category!.icon, color: Colors.grey),
                       Padding(
                         padding: EdgeInsets.only(left: 10.0),
                         child: Text(
@@ -123,14 +124,15 @@ class CreateTodo extends HookConsumerWidget {
                                   icon: Icon(Icons.delete),
                                   onPressed: () => {
                                     ref
-                                        .read(todoListProvider.notifier)
+                                        .read(subtaskProvider(todo).notifier)
                                         .removeTodo(todo)
                                   },
                                 ),
                               ),
                               onChanged: (bool? newState) => {
+                                print("complete"),
                                 ref
-                                    .read(todoListProvider.notifier)
+                                    .read(subtaskProvider(todo).notifier)
                                     .toggleCompleted(todo.id)
                               },
                             ),
@@ -155,8 +157,8 @@ class CreateTodo extends HookConsumerWidget {
                   ),
                   onTap: () {
                     print("tap");
-                    ref.read(todoListProvider.notifier).addSubtask(todo);
-                    print(ref.read(todoListProvider).data.where((element) => element.id == todo.id).first.subtasks.data.length);
+                    ref.read(subtaskProvider(todo).notifier).add();
+                    print(ref.read(subtaskProvider(todo)).data.length);
                   },
                 ),
                 // SizedBox(height: 50),

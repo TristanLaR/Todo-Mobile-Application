@@ -58,26 +58,12 @@ class TodoList extends StateNotifier<ListOfTodoModel> {
   }
 
   void addSubtask(Todo currentTodo) {
-    final oldState = state;
-    final oldData = state.data.where((element) => element.id == currentTodo.id);
     final oldSubtasks = state.data.where((element) => element.id == currentTodo.id).first.subtasks.data;
     Todo subtask = Todo(id: _uuid.v4(), category: currentTodo.category, description: "Subtask");
     state = ListOfTodoModel(data: [
       for (Todo todo in state.data)
         if (todo.id == currentTodo.id)
           currentTodo.copyWith(subtasks: ListOfTodoModel(data: [...oldSubtasks, subtask]))
-        else
-          todo
-    ]);
-    print("Added subtask");
-  }
-
-  void addSubtaskk(Todo currentTodo) {
-    Todo subtask = Todo(id: _uuid.v4(), category: currentTodo.category, description: "Subtask");
-    state = ListOfTodoModel(data: [
-      for (final todo in state.data)
-        if (todo.id ==  currentTodo.id)
-          currentTodo.copyWith(subtasks: ListOfTodoModel(data: [...currentTodo.subtasks.data, subtask]))
         else
           todo
     ]);

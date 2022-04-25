@@ -4,7 +4,7 @@ import 'package:todo/models/todo_category.dart';
 class Todo {
   late String id;
   late String description;
-  late TodoCategory category;
+  late TodoCategory? category;
   late bool isCompleted;
   late bool isFavourite;
   late ListOfTodoModel subtasks;
@@ -12,7 +12,7 @@ class Todo {
   Todo({
     required this.id,
     this.description = "",
-    required this.category,
+    this.category,
     ListOfTodoModel? subtasks,
     this.isCompleted = false,
     this.isFavourite = false,

@@ -13,9 +13,10 @@ class Todo {
     required this.id,
     this.description = "",
     required this.category,
+    ListOfTodoModel? subtasks,
     this.isCompleted = false,
     this.isFavourite = false,
-  }) : subtasks = ListOfTodoModel(data: []);
+  }) : subtasks = subtasks ?? ListOfTodoModel(data: []);
 
   Todo.fromJson(Map<String, dynamic> json) {
     id = json["id"].toString();
@@ -30,5 +31,23 @@ class Todo {
     data["isCompleted"] = isCompleted;
     data["isFavourite"] = isFavourite;
     return data;
+  }
+
+  Todo copyWith({
+    String? id,
+    String? description,
+    TodoCategory? category,
+    bool? isCompleted,
+    bool? isFavourite,
+    ListOfTodoModel? subtasks,
+  }) {
+    return Todo(
+      id: id ?? this.id,
+      description: description ?? this.description,
+      category: category ?? this.category,
+      isCompleted: isCompleted ?? this.isCompleted,
+      isFavourite: isFavourite ?? this.isFavourite,
+      subtasks: subtasks ?? this.subtasks,
+    );
   }
 }

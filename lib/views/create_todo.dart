@@ -17,6 +17,9 @@ class CreateTodo extends HookConsumerWidget {
     textController.selection = TextSelection.fromPosition(
         TextPosition(offset: textController.text.length));
     final category = todoCategory ?? todo.category;
+
+    final subtasks = ref.watch(todoListProvider).data.where((element) => element.id == todo.id).first.subtasks;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -96,39 +99,65 @@ class CreateTodo extends HookConsumerWidget {
                   ),
                 ),
                 Divider(),
-                ListView.builder(
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12.0),
-                        child: Row(
-                          children: [
-                            Icon(Icons.add, color: Colors.grey),
-                            Padding(
-                              padding: EdgeInsets.only(left: 10.0),
-                              child: Text(
-                                "Subtask $index",
-                                style: TextStyle(color: Colors.grey),
+                ListView(
+                    padding: EdgeInsets.only(left: 5.0),
+                    shrinkWrap: true,
+                    children: subtasks.data
+                        .map(
+                          (todo) => CheckboxListTile(
+                              activeColor: Colors.grey,
+                              controlAffinity: ListTileControlAffinity.leading,
+                              value: todo.isCompleted,
+                              title: Text(
+                                todo.description,
+                                style: todo.isCompleted
+                                    ? TextStyle(
+                                        decoration: TextDecoration.lineThrough,
+                                        color: Colors.grey.withOpacity(0.6),
+                                      )
+                                    : TextStyle(),
                               ),
-                            )
-                          ],
-                        ),
-                      );
-                    },
-                    itemCount: todo.subtasks.data.length),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
-                  child: Row(
-                    children: [
-                      Icon(Icons.add, color: Colors.grey),
-                      Padding(
-                        padding: EdgeInsets.only(left: 10.0),
-                        child: Text(
-                          "Add a new subtask",
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      )
-                    ],
+                              secondary: Visibility(
+                                visible: todo.isCompleted,
+                                child: IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () => {
+                                    ref
+                                        .read(todoListProvider.notifier)
+                                        .removeTodo(todo)
+                                  },
+                                ),
+                              ),
+                              onChanged: (bool? newState) => {
+                                ref
+                                    .read(todoListProvider.notifier)
+                                    .toggleCompleted(todo.id)
+                              },
+                            ),
+                        )
+                        .toList(),
                   ),
+                InkWell(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    child: Row(
+                      children: [
+                        Icon(Icons.add, color: Colors.grey),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10.0),
+                          child: Text(
+                            "Add a new subtask",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  onTap: () {
+                    print("tap");
+                    ref.read(todoListProvider.notifier).addSubtask(todo);
+                    print(ref.read(todoListProvider).data.where((element) => element.id == todo.id).first.subtasks.data.length);
+                  },
                 ),
                 // SizedBox(height: 50),
                 // Divider(),

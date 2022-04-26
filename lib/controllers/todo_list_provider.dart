@@ -96,6 +96,7 @@ class TodoList extends StateNotifier<ListOfTodoModel> {
             category: todo.category,
             isCompleted: !todo.isCompleted,
             isFavourite: todo.isFavourite,
+            subtasks: todo.subtasks,
           )
         else
           todo,
@@ -113,6 +114,7 @@ class TodoList extends StateNotifier<ListOfTodoModel> {
             category: todo.category,
             isCompleted: todo.isCompleted,
             isFavourite: todo.isFavourite,
+            subtasks: todo.subtasks,
           )
         else
           todo,

@@ -23,22 +23,6 @@ class SubtaskProvider extends StateNotifier<ListOfTodoModel> {
     ]);
   }
 
-  /// Toggle Favourite
-  void toggleFavourite(String id) async {
-    state = ListOfTodoModel(data: [
-      for (final todo in state.data)
-        if (todo.id == id)
-          Todo(
-              id: todo.id,
-              description: todo.description,
-              category: todo.category,
-              isCompleted: todo.isCompleted,
-              isFavourite: !todo.isFavourite)
-        else
-          todo,
-    ]);
-  }
-
   /// Toggle Completed
   void toggleCompleted(String id) {
     state = ListOfTodoModel(data: [

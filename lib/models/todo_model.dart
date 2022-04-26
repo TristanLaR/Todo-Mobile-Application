@@ -7,7 +7,6 @@ class Todo {
   late TodoCategory? category;
   late bool isCompleted;
   late bool isFavourite;
-  late ListOfTodoModel subtasks;
 
   Todo({
     required this.id,
@@ -16,7 +15,7 @@ class Todo {
     ListOfTodoModel? subtasks,
     this.isCompleted = false,
     this.isFavourite = false,
-  }) : subtasks = subtasks ?? ListOfTodoModel(data: []);
+  });
 
   Todo.fromJson(Map<String, dynamic> json) {
     id = json["id"].toString();
@@ -39,7 +38,6 @@ class Todo {
     TodoCategory? category,
     bool? isCompleted,
     bool? isFavourite,
-    ListOfTodoModel? subtasks,
   }) {
     return Todo(
       id: id ?? this.id,
@@ -47,7 +45,19 @@ class Todo {
       category: category ?? this.category,
       isCompleted: isCompleted ?? this.isCompleted,
       isFavourite: isFavourite ?? this.isFavourite,
-      subtasks: subtasks ?? this.subtasks,
     );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+  
+    return other is Todo &&
+      other.id == id;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode;
   }
 }

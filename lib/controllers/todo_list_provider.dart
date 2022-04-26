@@ -57,18 +57,6 @@ class TodoList extends StateNotifier<ListOfTodoModel> {
     return todo;
   }
 
-  void addSubtask(Todo currentTodo) {
-    final oldSubtasks = state.data.where((element) => element.id == currentTodo.id).first.subtasks.data;
-    Todo subtask = Todo(id: _uuid.v4(), category: currentTodo.category, description: "Subtask");
-    state = ListOfTodoModel(data: [
-      for (Todo todo in state.data)
-        if (todo.id == currentTodo.id)
-          currentTodo.copyWith(subtasks: ListOfTodoModel(data: [...oldSubtasks, subtask]))
-        else
-          todo
-    ]);
-  }
-
   /// Toggle Favourite
   void toggleFavourite(String id) async {
     state = ListOfTodoModel(data: [
@@ -96,7 +84,6 @@ class TodoList extends StateNotifier<ListOfTodoModel> {
             category: todo.category,
             isCompleted: !todo.isCompleted,
             isFavourite: todo.isFavourite,
-            subtasks: todo.subtasks,
           )
         else
           todo,
@@ -114,7 +101,6 @@ class TodoList extends StateNotifier<ListOfTodoModel> {
             category: todo.category,
             isCompleted: todo.isCompleted,
             isFavourite: todo.isFavourite,
-            subtasks: todo.subtasks,
           )
         else
           todo,

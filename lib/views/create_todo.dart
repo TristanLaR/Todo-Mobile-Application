@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:todo/controllers/subtask_provider.dart';
 import 'package:todo/controllers/todo_list_provider.dart';
+import 'package:todo/models/list_todo_model.dart';
 import 'package:todo/models/todo_category.dart';
 import 'package:todo/models/todo_model.dart';
 
@@ -20,14 +21,15 @@ class CreateTodo extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final textController = useTextEditingController();
 
-    // final textState =
-    //     useState<String>("");
-
     useEffect(() {
-      textController.text = ref.read(todoListProvider.notifier).state.data.firstWhere((element) => todo.id == element.id).description;
+      textController.text = ref
+          .read(todoListProvider.notifier)
+          .state
+          .data
+          .firstWhere((element) => todo.id == element.id)
+          .description;
     }, [textController]);
 
-    
     textController.selection = TextSelection.fromPosition(
         TextPosition(offset: textController.text.length));
     final category = todoCategory ?? todo.category;
@@ -119,37 +121,9 @@ class CreateTodo extends HookConsumerWidget {
                   shrinkWrap: true,
                   children: subtasks.data
                       .map(
-                        (subtask) => CheckboxListTile(
-                          activeColor: Colors.grey,
-                          contentPadding: EdgeInsets.zero,
-                          controlAffinity: ListTileControlAffinity.leading,
-                          value: subtask.isCompleted,
-                          title: Text(
-                            subtask.description,
-                            style: subtask.isCompleted
-                                ? TextStyle(
-                                    decoration: TextDecoration.lineThrough,
-                                    color: Colors.grey.withOpacity(0.6),
-                                  )
-                                : TextStyle(),
-                          ),
-                          secondary: Visibility(
-                            visible: subtask.isCompleted,
-                            child: IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () => {
-                                ref
-                                    .read(subtaskProvider(todo).notifier)
-                                    .removeTodo(subtask)
-                              },
-                            ),
-                          ),
-                          onChanged: (bool? newState) => {
-                            print("complete"),
-                            ref
-                                .read(subtaskProvider(todo).notifier)
-                                .toggleCompleted(subtask.id)
-                          },
+                        (subtask) => _SubtaskField(
+                          parentTodo: todo,
+                          subtask: subtask,
                         ),
                       )
                       .toList(),
@@ -212,6 +186,65 @@ class CreateTodo extends HookConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _SubtaskField extends HookConsumerWidget {
+  const _SubtaskField(
+      {required this.subtask, required this.parentTodo, Key? key})
+      : super(key: key);
+
+  final Todo subtask;
+  final Todo parentTodo;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final textController = useTextEditingController();
+    final subtaskState = ref.read(subtaskProvider(parentTodo).notifier).state;
+
+    useEffect(() {
+      textController.text = subtaskState
+          .data
+          .firstWhere((element) => subtask.id == element.id)
+          .description;
+    }, [subtask, subtaskState]);
+
+    textController.selection = TextSelection.fromPosition(
+        TextPosition(offset: textController.text.length));
+
+    return CheckboxListTile(
+      activeColor: Colors.grey,
+      contentPadding: EdgeInsets.zero,
+      controlAffinity: ListTileControlAffinity.leading,
+      value: subtask.isCompleted,
+      title: TextField(
+        controller: textController,
+        textCapitalization: TextCapitalization.sentences,
+        decoration: null,
+        style: subtask.isCompleted
+            ? TextStyle(
+                decoration: TextDecoration.lineThrough,
+                color: Colors.grey.withOpacity(0.6),
+              )
+            : TextStyle(),
+        autofocus: false,
+      ),
+      secondary: Visibility(
+        visible: subtask.isCompleted,
+        child: IconButton(
+          icon: Icon(Icons.delete),
+          onPressed: () => {
+            ref.read(subtaskProvider(parentTodo).notifier).removeTodo(subtask)
+          },
+        ),
+      ),
+      onChanged: (bool? newState) => {
+        print("complete"),
+        ref
+            .read(subtaskProvider(parentTodo).notifier)
+            .toggleCompleted(subtask.id)
+      },
     );
   }
 }
